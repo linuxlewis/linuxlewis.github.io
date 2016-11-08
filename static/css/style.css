@@ -6,7 +6,7 @@ html {
         -o-background-size: cover;
         background-size: cover;
 }
-h1,h2,h3,h4,h5,h6{
+h1,h2,h3,h4,h5,h6,p{
     color:white;
 }
 
@@ -76,7 +76,7 @@ body{
     margin-bottom:20px;
 }
 .red-bg{
-    background: rgba(102,0,0,.7);
+    background: rgba(102,0,0,.9);
 }
 
 /*** TEXT STYLES ***/
