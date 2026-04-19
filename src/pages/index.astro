@@ -1,0 +1,109 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SocialIcon from "../components/SocialIcon.astro";
+import { site } from "../data/site";
+---
+
+<BaseLayout
+  title={site.seo.title}
+  description={site.seo.description}
+  markdownHref="/index.md"
+>
+  <main class="shell">
+    <section class="hero">
+      <header class="topline">
+        <p class="identity">{site.profile.name}</p>
+        <p class="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          {site.status.label}: {site.status.prefix}{" "}
+          <a href={site.status.company.href} target="_blank" rel="noreferrer">
+            {site.status.company.label}
+          </a>
+        </p>
+      </header>
+
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">{site.profile.role}</p>
+          <p class="intro">{site.profile.intro}</p>
+          <h1>{site.profile.headline}</h1>
+          <p class="lede">{site.profile.body}</p>
+        </div>
+
+        <div class="profile-card">
+          <picture>
+            <source srcset="/headshot.webp" type="image/webp" />
+            <img
+              class="profile-image"
+              src="/headshot.jpg"
+              alt="Portrait of Sam Bolgert"
+              width="512"
+              height="512"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
+        </div>
+
+        <aside class="focus-panel" aria-labelledby="focus-title">
+          <p id="focus-title" class="panel-label">Focus areas</p>
+          <ul class="focus-list">
+            {site.focus.map((item) => <li>{item}</li>)}
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="links-section" aria-labelledby="links-title">
+      <div class="section-heading">
+        <p class="section-index">01</p>
+        <h2 id="links-title">Find me where the work happens</h2>
+      </div>
+
+      <div class="links-grid">
+        {
+          site.links.map((link) => (
+            <a
+              class="link-card"
+              href={link.href}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <span class="link-card__header">
+                <SocialIcon
+                  name={link.label.toLowerCase() as "github" | "x" | "linkedin"}
+                />
+                <span class="link-card__title">{link.label}</span>
+              </span>
+              <span class="link-card__detail">{link.detail}</span>
+              <span class="link-card__action">Open profile</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="heatmap-section" aria-labelledby="heatmap-title">
+      <div class="section-heading">
+        <p class="section-index">02</p>
+        <h2 id="heatmap-title">{site.heatmap.label}</h2>
+      </div>
+
+      <a
+        class="heatmap-card"
+        href={site.heatmap.href}
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img src={site.heatmap.image} alt={site.heatmap.alt} loading="lazy" />
+        <span class="heatmap-card__action">Open GitHub profile</span>
+      </a>
+    </section>
+
+    <footer class="footer-link">
+      <a href="/index.md"
+        ><span aria-hidden="true">🤖</span> AI agent? View as Markdown</a
+      >
+    </footer>
+  </main>
+</BaseLayout>
