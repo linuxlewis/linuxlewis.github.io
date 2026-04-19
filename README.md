@@ -2,33 +2,13 @@
 
 This repository contains the source for `sambolgert.com`, a one-page personal site for Sam Bolgert.
 
-## Brief
-
-The site is intentionally narrow in scope:
-
-- Position Sam as a builder of AI-native products.
-- Emphasize business value, not AI hype.
-- Route visitors to the three channels that matter: GitHub, X, and LinkedIn.
-- Stay lightweight, fast, and easy to maintain on GitHub Pages.
-
-The current design direction is a `Signal` / `Console` hybrid:
-
-- dark, technical, restrained
-- strong headline typography
-- monospace UI details
-- subtle grid and panel framing
-- no terminal cosplay
-- no contact form or email CTA
-
-Canonical homepage copy lives in [src/data/site.ts](src/data/site.ts).
-
 ## Stack
 
 - Astro
 - static output
 - GitHub Pages via GitHub Actions
 
-This is a greenfield rebuild. Nothing from the legacy Foundation site is retained except the domain.
+Canonical homepage content lives in [src/data/site.ts](src/data/site.ts).
 
 ## Local Setup
 
