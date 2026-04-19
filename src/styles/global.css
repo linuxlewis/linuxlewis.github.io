@@ -1,0 +1,485 @@
+:root {
+  --bg: #0c1016;
+  --bg-elevated: rgba(17, 24, 36, 0.84);
+  --bg-panel: rgba(10, 14, 20, 0.72);
+  --line: rgba(137, 229, 176, 0.24);
+  --line-strong: rgba(137, 229, 176, 0.5);
+  --text: #eff5f1;
+  --muted: #9caab6;
+  --accent: #89e5b0;
+  --accent-soft: rgba(137, 229, 176, 0.12);
+  --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  --radius: 24px;
+  --content-width: 1120px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(137, 229, 176, 0.12), transparent 35%),
+    linear-gradient(180deg, #121923 0%, #0c1016 55%, #090c11 100%);
+  color: var(--text);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(rgba(137, 229, 176, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(137, 229, 176, 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(137, 229, 176, 0.06),
+      transparent 20%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(255, 255, 255, 0.035),
+      transparent 16%
+    );
+  opacity: 0.65;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+p,
+h1,
+h2,
+ul {
+  margin: 0;
+}
+
+.shell {
+  width: min(calc(100% - 2rem), var(--content-width));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.hero,
+.links-section,
+.heatmap-section {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    180deg,
+    rgba(18, 25, 35, 0.88),
+    rgba(11, 15, 22, 0.76)
+  );
+  box-shadow: var(--shadow);
+}
+
+.hero {
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+
+.hero::after,
+.links-section::after,
+.heatmap-section::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(137, 229, 176, 0.06) 100%
+  );
+  pointer-events: none;
+}
+
+.topline,
+.section-heading {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.topline {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.identity {
+  color: var(--text);
+}
+
+.status {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  text-align: right;
+}
+
+.status a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: rgba(137, 229, 176, 0.45);
+  text-underline-offset: 0.18em;
+}
+
+.status a:hover,
+.status a:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+.status-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 6px rgba(137, 229, 176, 0.12);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(14rem, 1fr);
+  grid-template-areas:
+    "copy profile"
+    "copy focus";
+  gap: 2rem;
+  align-items: start;
+}
+
+.profile-card {
+  grid-area: profile;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg-panel);
+}
+
+.profile-card picture {
+  display: block;
+  width: 100%;
+}
+
+.profile-image {
+  width: min(100%, 11.5rem);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  display: block;
+  object-fit: cover;
+  object-position: center 22%;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 2px solid rgba(137, 229, 176, 0.24);
+  box-shadow:
+    0 0 0 8px rgba(137, 229, 176, 0.07),
+    0 16px 32px rgba(0, 0, 0, 0.24);
+}
+
+.hero-copy {
+  grid-area: copy;
+}
+
+.eyebrow,
+.intro,
+.panel-label,
+.section-index,
+.link-card__action {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.intro {
+  margin-top: 1rem;
+  color: var(--text);
+  font-size: 0.94rem;
+  letter-spacing: 0.08em;
+}
+
+.hero-copy h1 {
+  max-width: 12ch;
+  margin-top: 0.85rem;
+  font-size: clamp(2.1rem, 5vw, 3.85rem);
+  line-height: 1.02;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.lede {
+  max-width: 43rem;
+  margin-top: 1.15rem;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.7vw, 1.2rem);
+  line-height: 1.65;
+}
+
+.focus-panel {
+  grid-area: focus;
+  align-self: stretch;
+  padding: 1.5rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--bg-panel);
+}
+
+.focus-list {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.focus-list li {
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(137, 229, 176, 0.14);
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+.links-section {
+  margin-top: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+
+.heatmap-section {
+  margin-top: 1.5rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+}
+
+.section-heading {
+  display: flex;
+  gap: 1rem;
+  align-items: baseline;
+  margin-bottom: 1.75rem;
+}
+
+.section-index {
+  min-width: 2ch;
+}
+
+.section-heading h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+}
+
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.link-card {
+  display: grid;
+  gap: 0.85rem;
+  min-height: 14rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 20, 29, 0.94),
+    rgba(9, 12, 17, 0.92)
+  );
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease;
+}
+
+.link-card:hover,
+.link-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  outline: none;
+}
+
+.link-card__header {
+  display: inline-flex;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.link-card__title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+.link-card__detail {
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.link-card__action {
+  align-self: end;
+}
+
+.heatmap-card {
+  display: grid;
+  gap: 1rem;
+  padding: 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 20, 29, 0.94),
+    rgba(9, 12, 17, 0.92)
+  );
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.heatmap-card:hover,
+.heatmap-card:focus-visible {
+  transform: translateY(-4px);
+  border-color: var(--line-strong);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  outline: none;
+}
+
+.heatmap-card img {
+  width: 100%;
+  display: block;
+  border-radius: 14px;
+  background: #0b1016;
+}
+
+.heatmap-card__action {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.footer-link {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 0 0.5rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.footer-link a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-decoration-color: rgba(137, 229, 176, 0.28);
+  text-underline-offset: 0.18em;
+}
+
+.footer-link a:hover,
+.footer-link a:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
+@media (max-width: 900px) {
+  .links-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) 8.5rem;
+    grid-template-areas:
+      "copy profile"
+      "focus focus";
+    gap: 1rem 1rem;
+  }
+
+  .topline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .status {
+    text-align: left;
+  }
+
+  .hero-copy h1 {
+    max-width: 100%;
+  }
+
+  .focus-panel {
+    margin-top: 0.25rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .shell {
+    width: min(calc(100% - 1rem), var(--content-width));
+    padding-top: 0.5rem;
+  }
+
+  .hero,
+  .links-section {
+    border-radius: 18px;
+  }
+
+  .topline {
+    margin-bottom: 2.5rem;
+  }
+
+  .link-card {
+    min-height: auto;
+  }
+
+  .profile-image {
+    width: min(100%, 7.25rem);
+    box-shadow:
+      0 0 0 6px rgba(137, 229, 176, 0.07),
+      0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .footer-link {
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .link-card {
+    transition: none;
+  }
+}

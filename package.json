@@ -1,0 +1,23 @@
+{
+  "name": "sambolgert-com",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "npm run format:check && npm run check && npm run build"
+  },
+  "dependencies": {
+    "astro": "^6.1.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.8",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.9.3"
+  }
+}
