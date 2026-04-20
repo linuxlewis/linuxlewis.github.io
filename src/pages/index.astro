@@ -24,10 +24,15 @@ import { site } from "../data/site";
 
       <div class="hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">{site.profile.role}</p>
-          <p class="intro">{site.profile.intro}</p>
-          <h1>{site.profile.headline}</h1>
-          <p class="lede">{site.profile.body}</p>
+          <div class="hero-meta">
+            <p class="eyebrow">{site.profile.role}</p>
+            <p class="intro">{site.profile.intro}</p>
+          </div>
+
+          <div class="hero-main">
+            <h1>{site.profile.headline}</h1>
+            <p class="lede">{site.profile.body}</p>
+          </div>
         </div>
 
         <div class="profile-card">

@@ -200,6 +200,11 @@ ul {
   grid-area: copy;
 }
 
+.hero-meta,
+.hero-main {
+  display: grid;
+}
+
 .eyebrow,
 .intro,
 .panel-label,
@@ -219,7 +224,7 @@ ul {
   letter-spacing: 0.08em;
 }
 
-.hero-copy h1 {
+.hero-main h1 {
   max-width: 12ch;
   margin-top: 0.85rem;
   font-size: clamp(2.1rem, 5vw, 3.85rem);
@@ -422,9 +427,23 @@ ul {
   .hero-grid {
     grid-template-columns: minmax(0, 1fr) 8.5rem;
     grid-template-areas:
-      "copy profile"
+      "meta profile"
+      "main main"
       "focus focus";
     gap: 1rem 1rem;
+  }
+
+  .hero-copy {
+    display: contents;
+  }
+
+  .hero-meta {
+    grid-area: meta;
+    align-content: start;
+  }
+
+  .hero-main {
+    grid-area: main;
   }
 
   .topline {
@@ -436,8 +455,9 @@ ul {
     text-align: left;
   }
 
-  .hero-copy h1 {
+  .hero-main h1 {
     max-width: 100%;
+    margin-top: 0;
   }
 
   .focus-panel {
