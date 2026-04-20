@@ -218,7 +218,7 @@ ul {
 }
 
 .intro {
-  margin-top: 1rem;
+  margin-top: 0.45rem;
   color: var(--text);
   font-size: clamp(1.05rem, 1.8vw, 1.25rem);
   letter-spacing: 0.08em;
@@ -425,12 +425,12 @@ ul {
   }
 
   .hero-grid {
-    grid-template-columns: minmax(0, 1fr) 8.5rem;
+    grid-template-columns: minmax(0, 1fr) 7rem;
     grid-template-areas:
       "meta profile"
       "main main"
       "focus focus";
-    gap: 1rem 1rem;
+    gap: 0.9rem 0.85rem;
   }
 
   .hero-copy {
@@ -440,6 +440,7 @@ ul {
   .hero-meta {
     grid-area: meta;
     align-content: start;
+    min-width: 0;
   }
 
   .hero-main {
@@ -477,7 +478,38 @@ ul {
   }
 
   .topline {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero {
+    padding: 1rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1fr) 5.75rem;
+    gap: 0.75rem;
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  .intro {
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-main h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    line-height: 1.04;
+  }
+
+  .lede {
+    margin-top: 0.9rem;
+    font-size: 0.98rem;
+    line-height: 1.55;
   }
 
   .link-card {
@@ -485,7 +517,7 @@ ul {
   }
 
   .profile-image {
-    width: min(100%, 7.25rem);
+    width: min(100%, 5.75rem);
     box-shadow:
       0 0 0 6px rgba(137, 229, 176, 0.07),
       0 10px 20px rgba(0, 0, 0, 0.2);

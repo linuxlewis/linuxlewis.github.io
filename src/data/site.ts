@@ -37,7 +37,7 @@ export const site = {
     "Business impact",
   ],
   status: {
-    label: "Current focus",
+    label: "Current",
     prefix: "Head of AI at",
     company: {
       label: "Mindbloom",
