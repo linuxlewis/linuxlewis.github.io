@@ -50,4 +50,20 @@ export const site = {
     image: "https://www.dailygreen.xyz/linuxlewis",
     alt: "GitHub contribution heatmap for linuxlewis",
   },
+  usage: {
+    label: "Token usage",
+    sub: "Trailing 365 days",
+    summary: "tokens across {models} models",
+    unavailable:
+      "Live token usage isn't available right now. Check back after the nightly export has run.",
+    dataUrl: "https://web.sambolgert.com/data/token-usage.json",
+    heatRows: ["Mon", "Wed", "Fri"],
+    donutCount: 6,
+  },
+  topModels: {
+    label: "Top models",
+    unavailable:
+      "Model rankings aren't available right now. Check back after the nightly export has run.",
+    count: 8,
+  },
 } as const;

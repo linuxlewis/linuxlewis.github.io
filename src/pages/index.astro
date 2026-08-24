@@ -1,7 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SocialIcon from "../components/SocialIcon.astro";
+import TokenUsage from "../components/TokenUsage.astro";
+import TopModels from "../components/TopModels.astro";
 import { site } from "../data/site";
+import { loadTokenUsage } from "../data/token-usage";
+
+const tokenUsage = await loadTokenUsage();
 ---
 
 <BaseLayout
@@ -104,6 +109,10 @@ import { site } from "../data/site";
         <span class="heatmap-card__action">Open GitHub profile</span>
       </a>
     </section>
+
+    <TokenUsage data={tokenUsage} />
+
+    <TopModels data={tokenUsage} />
 
     <footer class="footer-link">
       <a
