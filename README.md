@@ -53,6 +53,61 @@ If you are changing content:
 
 - edit [src/data/site.ts](src/data/site.ts)
 
+## Token Usage Sections
+
+The homepage renders two usage sections from a build-time snapshot fetched from
+`https://web.sambolgert.com/data/token-usage.json`:
+
+- **Token usage** (`src/components/TokenUsage.astro`) — a rolling 365-day
+  GitHub-style heatmap (Sunday-first weeks, month markers, today's week trailing
+  blank squares) with a hover tooltip that breaks each day down per model.
+- **Top models** (`src/components/TopModels.astro`) — a ranked list of the top
+  five models with token counts.
+
+The loader and fetch live in [src/data/token-usage.ts](src/data/token-usage.ts),
+validated at the JSON boundary before rendering. When the file is temporarily
+unavailable at build time, both sections render a graceful offline note instead
+of failing the build. Zero runtime JavaScript is emitted — all charts are static
+HTML/CSS.
+
+### Data source
+
+The snapshot is produced by the private LiteLLM gateway, which lives in a
+separate checkout at `/home/sbolgert/workspace/litellm-gateway`. Its
+`scripts/export-token-usage.sh` reads `LiteLLM_DailyUserSpend` via
+`docker exec litellm-gateway-db psql -U litellm -d litellm` and writes the
+privacy-safe JSON to `web-server/public/data/token-usage.json` (served by nginx
+at `web.sambolgert.com`).
+
+To inspect the gateway data or run the export manually:
+
+```bash
+cd /home/sbolgert/workspace/litellm-gateway
+
+# Inspect the raw daily aggregates (privacy-safe columns only):
+docker exec litellm-gateway-db psql -U litellm -d litellm \
+  -c 'SELECT date, model, prompt_tokens, completion_tokens, api_requests FROM "LiteLLM_DailyUserSpend" ORDER BY date DESC LIMIT 20;'
+
+# Regenerate the public snapshot:
+./scripts/export-token-usage.sh
+
+# Verify the export is fresh and valid:
+./scripts/check-token-usage-export.sh
+```
+
+The export runs nightly at 03:30 from the user-level systemd pair
+`token-usage-export.timer` / `.service` in that checkout. Monitor its success
+with:
+
+```bash
+systemctl --user status token-usage-export.service
+systemctl --user list-timers token-usage-export.timer
+journalctl --user -u token-usage-export.service -n 20
+```
+
+See `litellm-gateway/README.md` ("Token Usage Export") in that checkout for the
+full JSON shape, install steps, and America/Chicago timezone handling.
+
 If you are changing layout or metadata:
 
 - edit [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro)

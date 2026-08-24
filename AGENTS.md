@@ -42,6 +42,10 @@ Do not let the site drift into:
   - `https://x.com/linuxlewis`
 - `channel.linkedin`
   - `https://www.linkedin.com/in/sbolgert`
+- `content.token_usage`
+  - build-time snapshot fetched from `https://web.sambolgert.com/data/token-usage.json`; loaded/validated in `src/data/token-usage.ts`
+- `integration.litellm_export`
+  - external gateway checkout at `/home/sbolgert/workspace/litellm-gateway`; its `scripts/export-token-usage.sh` + `token-usage-export.timer` produce the snapshot nightly
 
 ### Relationships
 
@@ -50,6 +54,8 @@ Do not let the site drift into:
 - `site` -> deploys_via -> `deploy.github_pages`
 - `site` -> resolves_to -> `domain.primary`
 - `page.home` -> uses -> `content.site_config`
+- `page.home` -> uses -> `content.token_usage`
+- `content.token_usage` -> sourced_from -> `integration.litellm_export`
 - `page.home` -> rendered_by -> `layout.base`
 - `page.home` -> styled_by -> `style.global`
 - `page.home` -> routes_to -> `channel.github`

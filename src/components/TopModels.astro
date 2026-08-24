@@ -1,0 +1,53 @@
+---
+import { formatTokens } from "../data/token-usage";
+import type { TokenUsageData } from "../data/token-usage";
+
+interface Props {
+  data: TokenUsageData | null;
+}
+
+const { data } = Astro.props;
+
+const models =
+  data?.totals.byModel
+    .map((m, index) => ({ ...m, rank: index + 1 }))
+    .slice(0, 5) ?? [];
+
+const maxTokens = models.length ? Math.max(...models.map((m) => m.tokens)) : 0;
+---
+
+<section class="top-model-section" aria-labelledby="top-model-title">
+  <div class="section-heading">
+    <p class="section-index">04</p>
+    <h2 id="top-model-title">Top models</h2>
+  </div>
+
+  {
+    data && models.length > 0 ? (
+      <div class="top-model-body">
+        <ol class="top-model-list">
+          {models.map((model) => (
+            <li class="top-model-row">
+              <span class="top-model-row__rank">{model.rank}</span>
+              <span class="top-model-row__name">{model.name}</span>
+              <span class="top-model-row__bar" aria-hidden="true">
+                <span
+                  class="top-model-row__bar-fill"
+                  style={`--bar-width:${maxTokens > 0 ? (model.tokens / maxTokens) * 100 : 0}%`}
+                />
+              </span>
+              <span class="top-model-row__tokens">
+                {formatTokens(model.tokens)}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ) : (
+      <p class="usage-unavailable">
+        Model rankings are not available right now. Check back after the nightly
+        export has run.
+      </p>
+    )
+  }
+</section>
