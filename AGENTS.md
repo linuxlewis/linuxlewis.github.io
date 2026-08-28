@@ -43,7 +43,7 @@ Do not let the site drift into:
 - `channel.linkedin`
   - `https://www.linkedin.com/in/sbolgert`
 - `content.token_usage`
-  - build-time snapshot fetched from `https://web.sambolgert.com/data/token-usage.json`; loaded/validated in `src/data/token-usage.ts`
+  - runtime snapshot fetched from `https://web.sambolgert.com/data/token-usage.json`; validated in `src/data/token-usage.ts` and rendered by `src/scripts/token-usage-client.ts`
 - `integration.litellm_export`
   - external gateway checkout at `/home/sbolgert/workspace/litellm-gateway`; its `scripts/export-token-usage.sh` + `token-usage-export.timer` produce the snapshot nightly
 

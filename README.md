@@ -55,7 +55,7 @@ If you are changing content:
 
 ## Token Usage Sections
 
-The homepage renders two usage sections from a build-time snapshot fetched from
+The homepage renders two usage sections from a runtime snapshot fetched from
 `https://web.sambolgert.com/data/token-usage.json`:
 
 - **Token usage** (`src/components/TokenUsage.astro`) — a rolling 365-day
@@ -64,11 +64,18 @@ The homepage renders two usage sections from a build-time snapshot fetched from
 - **Top models** (`src/components/TopModels.astro`) — a ranked list of the top
   five models with token counts.
 
-The loader and fetch live in [src/data/token-usage.ts](src/data/token-usage.ts),
-validated at the JSON boundary before rendering. When the file is temporarily
-unavailable at build time, both sections render a graceful offline note instead
-of failing the build. Zero runtime JavaScript is emitted — all charts are static
-HTML/CSS.
+The data parser and display helpers live in
+[src/data/token-usage.ts](src/data/token-usage.ts), while
+[src/scripts/token-usage-client.ts](src/scripts/token-usage-client.ts) fetches,
+validates, and renders the response in the browser. When the file is
+temporarily unavailable, both sections render a graceful offline note. The rest
+of the page remains static; only these two data-driven sections use runtime
+JavaScript.
+
+The data endpoint must allow CORS requests from `https://sambolgert.com`.
+The Nginx rule for that endpoint also sends `Cache-Control: no-cache`, and the
+client adds a cache-busting query parameter so a newly exported snapshot is
+visible without rebuilding or redeploying the homepage.
 
 ### Data source
 

@@ -4,9 +4,6 @@ import SocialIcon from "../components/SocialIcon.astro";
 import TokenUsage from "../components/TokenUsage.astro";
 import TopModels from "../components/TopModels.astro";
 import { site } from "../data/site";
-import { loadTokenUsage } from "../data/token-usage";
-
-const tokenUsage = await loadTokenUsage();
 ---
 
 <BaseLayout
@@ -110,9 +107,15 @@ const tokenUsage = await loadTokenUsage();
       </a>
     </section>
 
-    <TokenUsage data={tokenUsage} />
+    <TokenUsage />
 
-    <TopModels data={tokenUsage} />
+    <TopModels />
+
+    <script>
+      import { initTokenUsage } from "../scripts/token-usage-client";
+
+      initTokenUsage();
+    </script>
 
     <footer class="footer-link">
       <a

@@ -1,167 +1,31 @@
 ---
-import {
-  buildHeatCells,
-  formatTokens,
-  formatShortDate,
-} from "../data/token-usage";
-import type { TokenUsageData } from "../data/token-usage";
-
-interface Props {
-  data: TokenUsageData | null;
-}
-
-const { data } = Astro.props;
-
-const cells = data ? buildHeatCells(data) : [];
-const weekCount = cells.length / 7;
-const gridStyle = `grid-template-columns:repeat(${weekCount},1fr);aspect-ratio:${13 * weekCount - 3}/88`;
-const monthsStyle = `grid-template-columns:repeat(${weekCount},1fr)`;
-
-const MONTHS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-// Month markers sit above the grid, at the week where each month begins.
-const monthMarkers: { week: number; label: string }[] = [];
-if (cells.length > 0) {
-  const firstDate = cells.find((cell) => cell.date)?.date;
-  if (firstDate) {
-    monthMarkers.push({
-      week: 0,
-      label: MONTHS[Number(firstDate.slice(5, 7)) - 1],
-    });
-  }
-  cells.forEach((cell, i) => {
-    if (cell.date && cell.date.endsWith("-01")) {
-      const week = Math.floor(i / 7);
-      const last = monthMarkers[monthMarkers.length - 1];
-      if (!last || last.week !== week) {
-        monthMarkers.push({
-          week,
-          label: MONTHS[Number(cell.date.slice(5, 7)) - 1],
-        });
-      }
-    }
-  });
-}
-
-// Flip the tooltip to grow inward near the grid edges so it never clips the
-// viewport. Rows are Sunday-first: Mon/Wed/Fri land on grid rows 2/4/6.
-const heatRows = ["Mon", "Wed", "Fri"];
-const FLIP_COLUMNS = 8;
+import { site } from "../data/site";
 ---
 
-<section class="usage-section" aria-labelledby="usage-title">
+<section
+  class="usage-section"
+  aria-labelledby="usage-title"
+  data-token-usage
+  data-data-url={site.usage.dataUrl}
+>
   <div class="section-heading">
     <p class="section-index">03</p>
     <h2 id="usage-title">Token usage</h2>
   </div>
 
-  {
-    data && cells.length > 0 ? (
-      <div class="usage-body">
-        <div class="usage-heat">
-          <div class="heat-months" aria-hidden="true" style={monthsStyle}>
-            {monthMarkers.map((marker) => (
-              <span class="heat-month" style={`grid-column:${marker.week + 1}`}>
-                {marker.label}
-              </span>
-            ))}
-          </div>
-
-          <div class="heat-plot">
-            <div class="heat-rows" aria-hidden="true">
-              {heatRows.map((label, i) => (
-                <span class="heat-row__label" style={`grid-row:${i * 2 + 2}`}>
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            <ul class="heat-grid" style={gridStyle}>
-              {cells.map((cell, i) => {
-                const week = Math.floor(i / 7);
-                const edge =
-                  week < FLIP_COLUMNS
-                    ? "heat-cell--tip-l"
-                    : week >= weekCount - FLIP_COLUMNS
-                      ? "heat-cell--tip-r"
-                      : undefined;
-                return (
-                  <li
-                    class:list={[
-                      "heat-cell",
-                      cell.future ? "heat-empty" : `heat-${cell.level}`,
-                      edge,
-                    ]}
-                    tabindex={cell.tokens > 0 ? 0 : undefined}
-                    aria-label={
-                      cell.tokens > 0
-                        ? `${cell.date}: ${formatTokens(cell.tokens)} tokens, ${cell.requests} requests`
-                        : undefined
-                    }
-                  >
-                    {cell.tokens > 0 && (
-                      <span class="heat-tooltip" role="tooltip">
-                        <span class="heat-tooltip__date">
-                          {formatShortDate(cell.date!)}
-                        </span>
-                        <span class="heat-tooltip__total">
-                          {formatTokens(cell.tokens)} tokens · {cell.requests}{" "}
-                          requests
-                        </span>
-                        <span class="heat-tooltip__models">
-                          {cell.models.map((model) => (
-                            <span class="heat-tooltip__model">
-                              <span class="heat-tooltip__model-name">
-                                {model.name}
-                              </span>
-                              <span class="heat-tooltip__model-tokens">
-                                {formatTokens(model.tokens)}
-                              </span>
-                              <span class="heat-tooltip__model-split">
-                                {formatTokens(model.prompt)} prompt ·{" "}
-                                {formatTokens(model.completion)} completion
-                              </span>
-                            </span>
-                          ))}
-                        </span>
-                      </span>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </div>
-
-        <div class="heat-legend">
-          <span class="heat-legend__label">Less</span>
-          {[0, 1, 2, 3, 4].map((level) => (
-            <span
-              class:list={["heat-cell", `heat-${level}`]}
-              aria-hidden="true"
-            />
-          ))}
-          <span class="heat-legend__label">More</span>
-        </div>
-      </div>
-    ) : (
-      <p class="usage-unavailable">
-        Live token usage is not available right now. Check back after the
-        nightly export has run.
-      </p>
-    )
-  }
+  <div data-usage-body hidden></div>
+  <p
+    class="usage-state usage-unavailable"
+    data-usage-state
+    role="status"
+    hidden
+  >
+    Loading live token usage...
+  </p>
+  <noscript>
+    <p class="usage-unavailable">
+      Live token usage requires JavaScript. Check the public data endpoint
+      directly if you want the latest export.
+    </p>
+  </noscript>
 </section>
