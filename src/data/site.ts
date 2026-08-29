@@ -55,7 +55,9 @@ export const site = {
     summary: "tokens across {models} models",
     unavailable:
       "Live token usage isn't available right now. Check back after the nightly export has run.",
-    dataUrl: "https://web.sambolgert.com/data/token-usage.json",
+    dataUrl: import.meta.env.DEV
+      ? "/data/token-usage.json"
+      : "https://web.sambolgert.com/data/token-usage.json",
     heatRows: ["Mon", "Wed", "Fri"],
     donutCount: 6,
   },
