@@ -1,26 +1,25 @@
 export const site = {
   seo: {
     title: "Sam Bolgert | AI-Native Product Builder",
-    description:
-      "Sam Bolgert builds AI-native products that drive real business value.",
+    description: "Sam Bolgert builds AI-native products for business value.",
   },
   profile: {
     name: "Sam Bolgert",
     intro: "Hi, I'm Sam Bolgert.",
     role: "AI-native software engineer",
     headline: "Building AI software that ships, scales, and gets used.",
-    body: "I build and lead teams building software at the intersection of applied AI, product engineering, and systems design. I’m interested in making AI useful in production, not just impressive in demos.",
+    body: "I build and lead teams building software across applied AI, product engineering, and systems design. I ship AI that delivers business outcomes, not demos.",
   },
   links: [
     {
       label: "GitHub",
       href: "https://github.com/linuxlewis",
-      detail: "Code, experiments, and shipped work",
+      detail: "AI products, experiments, and shipped code",
     },
     {
       label: "X",
       href: "https://x.com/linuxlewis",
-      detail: "Thoughts, product notes, memes, and signal",
+      detail: "AI thoughts, hot takes, and memes",
     },
     {
       label: "LinkedIn",
@@ -56,7 +55,9 @@ export const site = {
     summary: "tokens across {models} models",
     unavailable:
       "Live token usage isn't available right now. Check back after the nightly export has run.",
-    dataUrl: "https://web.sambolgert.com/data/token-usage.json",
+    dataUrl: import.meta.env.DEV
+      ? "/data/token-usage.json"
+      : "https://web.sambolgert.com/data/token-usage.json",
     heatRows: ["Mon", "Wed", "Fri"],
     donutCount: 6,
   },

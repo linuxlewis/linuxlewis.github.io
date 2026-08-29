@@ -4,6 +4,9 @@ import SocialIcon from "../components/SocialIcon.astro";
 import TokenUsage from "../components/TokenUsage.astro";
 import TopModels from "../components/TopModels.astro";
 import { site } from "../data/site";
+import { loadGithubHeatmap } from "../data/github-heatmap";
+
+const githubHeatmap = await loadGithubHeatmap();
 ---
 
 <BaseLayout
@@ -12,110 +15,129 @@ import { site } from "../data/site";
   markdownHref="/index.md"
 >
   <main class="shell">
-    <section class="hero">
-      <header class="topline">
-        <p class="identity">{site.profile.name}</p>
-        <p class="status">
-          <span class="status-dot" aria-hidden="true"></span>
-          {site.status.label}: {site.status.prefix}{" "}
-          <a href={site.status.company.href} target="_blank" rel="noreferrer">
-            {site.status.company.label}
-          </a>
-        </p>
-      </header>
-
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <div class="hero-meta">
-            <p class="eyebrow">{site.profile.role}</p>
-            <p class="intro">{site.profile.intro}</p>
-          </div>
-
-          <div class="hero-main">
-            <h1>{site.profile.headline}</h1>
-            <p class="lede">{site.profile.body}</p>
-          </div>
-        </div>
-
-        <div class="profile-card">
-          <picture>
-            <source srcset="/headshot.webp" type="image/webp" />
-            <img
-              class="profile-image"
-              src="/headshot.jpg"
-              alt="Portrait of Sam Bolgert"
-              width="512"
-              height="512"
-              loading="eager"
-              decoding="async"
-            />
-          </picture>
-        </div>
-
-        <aside class="focus-panel" aria-labelledby="focus-title">
-          <p id="focus-title" class="panel-label">Focus areas</p>
-          <ul class="focus-list">
-            {site.focus.map((item) => <li>{item}</li>)}
-          </ul>
-        </aside>
-      </div>
-    </section>
-
-    <section class="links-section" aria-labelledby="links-title">
-      <div class="section-heading">
-        <p class="section-index">01</p>
-        <h2 id="links-title">Find me where the work happens</h2>
-      </div>
-
-      <div class="links-grid">
-        {
-          site.links.map((link) => (
-            <a
-              class="link-card"
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span class="link-card__header">
-                <SocialIcon
-                  name={link.label.toLowerCase() as "github" | "x" | "linkedin"}
-                />
-                <span class="link-card__title">{link.label}</span>
-              </span>
-              <span class="link-card__detail">{link.detail}</span>
-              <span class="link-card__action">Open profile</span>
+    <div class="spec-sheet">
+      <section class="hero spec-section">
+        <header class="topline">
+          <p class="identity">{site.profile.name}</p>
+          <p class="status">
+            <span class="status-dot" aria-hidden="true"></span>
+            {site.status.label}: {site.status.prefix}{" "}
+            <a href={site.status.company.href} target="_blank" rel="noreferrer">
+              {site.status.company.label}
             </a>
-          ))
-        }
-      </div>
-    </section>
+          </p>
+        </header>
 
-    <section class="heatmap-section" aria-labelledby="heatmap-title">
-      <div class="section-heading">
-        <p class="section-index">02</p>
-        <h2 id="heatmap-title">{site.heatmap.label}</h2>
-      </div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="hero-intro">
+              <div class="profile-card">
+                <picture>
+                  <source srcset="/headshot.webp" type="image/webp" />
+                  <img
+                    class="profile-image"
+                    src="/headshot.jpg"
+                    alt="Portrait of Sam Bolgert"
+                    width="512"
+                    height="512"
+                    loading="eager"
+                    decoding="async"
+                  />
+                </picture>
+              </div>
 
-      <a
-        class="heatmap-card"
-        href={site.heatmap.href}
-        target="_blank"
-        rel="noreferrer"
+              <div class="hero-meta">
+                <p class="eyebrow">{site.profile.role}</p>
+                <p class="intro">{site.profile.intro}</p>
+              </div>
+            </div>
+
+            <div class="hero-main">
+              <h1>{site.profile.headline}</h1>
+              <p class="lede">{site.profile.body}</p>
+            </div>
+          </div>
+
+          <aside class="focus-panel" aria-labelledby="focus-title">
+            <p id="focus-title" class="panel-label">Focus areas</p>
+            <ul class="focus-list">
+              {site.focus.map((item) => <li>{item}</li>)}
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="links-section spec-section" aria-labelledby="links-title">
+        <div class="section-heading">
+          <p class="section-index">01</p>
+          <h2 id="links-title">Find me where the work happens</h2>
+        </div>
+
+        <div class="links-grid">
+          {
+            site.links.map((link) => (
+              <a
+                class="link-card"
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span class="link-card__header">
+                  <SocialIcon
+                    name={
+                      link.label.toLowerCase() as "github" | "x" | "linkedin"
+                    }
+                  />
+                  <span class="link-card__title">{link.label}</span>
+                </span>
+                <span class="link-card__detail">{link.detail}</span>
+                <span class="link-card__action">Open profile</span>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+
+      <section
+        class="heatmap-section spec-section"
+        aria-labelledby="heatmap-title"
       >
-        <img src={site.heatmap.image} alt={site.heatmap.alt} loading="lazy" />
-        <span class="heatmap-card__action">Open GitHub profile</span>
-      </a>
-    </section>
+        <div class="section-heading">
+          <p class="section-index">02</p>
+          <h2 id="heatmap-title">{site.heatmap.label}</h2>
+        </div>
 
-    <TokenUsage />
+        <a
+          class="heatmap-card"
+          href={site.heatmap.href}
+          target="_blank"
+          rel="noreferrer"
+        >
+          {
+            githubHeatmap ? (
+              <span class="heatmap-svg" set:html={githubHeatmap} />
+            ) : (
+              <img
+                src={site.heatmap.image}
+                alt={site.heatmap.alt}
+                loading="lazy"
+              />
+            )
+          }
+          <span class="heatmap-card__action">Open GitHub profile</span>
+        </a>
+      </section>
 
-    <TopModels />
+      <TokenUsage />
 
-    <script>
-      import { initTokenUsage } from "../scripts/token-usage-client";
+      <TopModels />
 
-      initTokenUsage();
-    </script>
+      <script>
+        import { initTokenUsage } from "../scripts/token-usage-client";
+
+        initTokenUsage();
+      </script>
+    </div>
 
     <footer class="footer-link">
       <a
