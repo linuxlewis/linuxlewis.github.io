@@ -1,11 +1,8 @@
 /**
- * Build-time loader for the sambolgert.com token-usage heatmap.
+ * Runtime data and rendering helpers for the sambolgert.com token-usage heatmap.
  *
  * The payload is produced nightly by the private LiteLLM gateway export and
  * published by the static web-server at https://web.sambolgert.com/data/token-usage.json.
- * This module fetches it once during the Astro build and degrades gracefully
- * when the file is temporarily absent (e.g. the first deploy before the export
- * has ever run).
  */
 
 export interface TokenUsageModel {
@@ -38,17 +35,6 @@ export interface TokenUsageData {
 
 export const TOKEN_USAGE_URL =
   "https://web.sambolgert.com/data/token-usage.json";
-
-// Local web-server copy, tried first when the build runs on the host that also
-// serves web.sambolgert.com. This keeps local `astro dev`/`astro build` runs
-// deterministic and offline-resistant; visitors/builds on other hosts simply
-// fall through to the public origin below.
-export const TOKEN_USAGE_LOCAL_URL =
-  "http://127.0.0.1:8082/data/token-usage.json";
-
-const TOKEN_USAGE_SOURCES = [TOKEN_USAGE_LOCAL_URL, TOKEN_USAGE_URL];
-
-const TOKEN_USAGE_TIMEOUT_MS = 4_000;
 
 const MEGATOKEN = 1_000_000;
 const GIGATOKEN = 1_000_000_000;
@@ -90,7 +76,8 @@ function sanitizeModel(value: unknown): TokenUsageModel | null {
   };
 }
 
-function sanitize(value: unknown): TokenUsageData | null {
+/** Validate and normalize an untrusted runtime JSON response. */
+export function parseTokenUsage(value: unknown): TokenUsageData | null {
   if (typeof value !== "object" || value === null) return null;
   const v = value as Record<string, unknown>;
   if (typeof v.generatedAt !== "string") return null;
@@ -140,37 +127,6 @@ function sanitize(value: unknown): TokenUsageData | null {
       models: Math.max(0, totals.models as number),
     },
   };
-}
-
-/**
- * Fetch the token-usage payload at build time; null when anything is off.
- *
- * Probes each candidate source in order and returns the first response that
- * both parses as JSON and passes shape validation. A short per-source timeout
- * keeps an unreachable public origin from stalling the build.
- */
-export async function loadTokenUsage(): Promise<TokenUsageData | null> {
-  for (const url of TOKEN_USAGE_SOURCES) {
-    let response: Response;
-    try {
-      response = await fetch(url, {
-        headers: { accept: "application/json" },
-        signal: AbortSignal.timeout(TOKEN_USAGE_TIMEOUT_MS),
-      });
-    } catch {
-      continue;
-    }
-    if (!response.ok) continue;
-    let value: unknown;
-    try {
-      value = await response.json();
-    } catch {
-      continue;
-    }
-    const data = sanitize(value);
-    if (data) return data;
-  }
-  return null;
 }
 
 /**
