@@ -374,12 +374,15 @@ svg {
   letter-spacing: 0.04em;
 }
 
-.heatmap-card {
-  display: grid;
-  gap: 0.8rem;
+.data-card {
   padding: 0.7rem;
   border: 1px solid var(--ink);
   background: var(--cell);
+}
+
+.heatmap-card {
+  display: grid;
+  gap: 0.8rem;
   transition: border-color 140ms ease;
 }
 
@@ -418,12 +421,38 @@ svg {
 
 .usage-body {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 1rem;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .usage-heat {
   display: block;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.usage-heat__scroller {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.usage-heat__canvas {
+  width: 100%;
+  min-width: 0;
+}
+
+.heat-mobile-detail {
+  display: none;
+}
+
+.usage-heat__scroller:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 0.3rem;
 }
 
 .heat-months {
@@ -482,6 +511,11 @@ svg {
   min-width: 9px;
   min-height: 9px;
   border-radius: 1px;
+}
+
+.heat-cell:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
 }
 
 .heat-0 {
@@ -655,8 +689,10 @@ svg {
 .top-model-row__name {
   display: grid;
   gap: 0.25rem;
+  min-width: 0;
   color: var(--ink);
   font-size: 0.8rem;
+  overflow-wrap: anywhere;
 }
 
 .top-model-row__bar {
@@ -742,6 +778,53 @@ svg {
     display: none;
   }
 
+  .usage-heat__scroller {
+    overflow-x: auto;
+    padding: 0.35rem 0 0.65rem;
+    scrollbar-color: var(--accent) rgba(240, 240, 236, 0.08);
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+    touch-action: auto;
+    cursor: grab;
+    user-select: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .usage-heat__scroller.is-dragging {
+    cursor: grabbing;
+  }
+
+  .usage-heat__canvas {
+    width: 50rem;
+    min-width: 50rem;
+  }
+
+  .heat-tooltip {
+    display: none;
+  }
+
+  .heat-mobile-detail {
+    display: grid;
+    gap: 0.35rem;
+    max-height: 18rem;
+    padding: 0.75rem;
+    overflow-y: auto;
+    border: 1px solid var(--dash);
+    background: rgba(255, 255, 255, 0.025);
+    color: var(--body);
+    font-size: 0.68rem;
+    line-height: 1.4;
+  }
+
+  .heat-mobile-detail[hidden] {
+    display: none;
+  }
+
+  .heat-cell.is-active {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
   .footer-link {
     align-items: flex-start;
     flex-direction: column;
@@ -778,8 +861,14 @@ svg {
     grid-template-columns: 1fr;
   }
 
-  .usage-heat {
-    overflow-x: auto;
+  .data-card {
+    padding: 0.65rem;
+  }
+
+  .top-model-row {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    gap: 0.65rem;
+    padding: 0.7rem 0.65rem;
   }
 }
 
