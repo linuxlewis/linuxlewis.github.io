@@ -115,7 +115,7 @@ function renderHeatmap(data: TokenUsageData): string {
       const tokenClass = cell.future ? "heat-empty" : `heat-${cell.level}`;
       const interactive =
         cell.tokens > 0
-          ? ` tabindex="0" aria-label="${escapeHtml(`${cell.date}: ${formatTokens(cell.tokens)} tokens, ${cell.requests} requests`)}"`
+          ? ` tabindex="0" data-heat-cell aria-controls="heat-mobile-detail" aria-label="${escapeHtml(`${cell.date}: ${formatTokens(cell.tokens)} tokens, ${cell.requests} requests`)}"`
           : "";
 
       return `<li class="heat-cell ${tokenClass} ${edge}"${interactive}>${renderTooltip(cell)}</li>`;
@@ -130,12 +130,19 @@ function renderHeatmap(data: TokenUsageData): string {
     .join("");
 
   return `
-    <div class="usage-body">
+    <div class="data-card usage-body">
       <div class="usage-heat">
-        <div class="heat-months" aria-hidden="true" style="${monthStyle}">${monthMarkers}</div>
-        <div class="heat-plot">
-          <div class="heat-rows" aria-hidden="true">${rowLabels}</div>
-          <ul class="heat-grid" style="${gridStyle}">${heatCells}</ul>
+        <div
+          class="usage-heat__scroller"
+          aria-label="Scrollable token usage heatmap for the trailing 365 days"
+        >
+          <div class="usage-heat__canvas">
+            <div class="heat-months" aria-hidden="true" style="${monthStyle}">${monthMarkers}</div>
+            <div class="heat-plot">
+              <div class="heat-rows" aria-hidden="true">${rowLabels}</div>
+              <ul class="heat-grid" style="${gridStyle}">${heatCells}</ul>
+            </div>
+          </div>
         </div>
       </div>
       <div class="heat-legend">
@@ -143,6 +150,13 @@ function renderHeatmap(data: TokenUsageData): string {
         ${legend}
         <span class="heat-legend__label">More</span>
       </div>
+      <div
+        class="heat-mobile-detail"
+        id="heat-mobile-detail"
+        data-heat-mobile-detail
+        aria-live="polite"
+        hidden
+      ></div>
     </div>`;
 }
 
@@ -165,7 +179,81 @@ function renderTopModels(data: TokenUsageData): string {
     )
     .join("");
 
-  return `<div class="top-model-body"><ol class="top-model-list">${rows}</ol></div>`;
+  return `<div class="data-card top-model-body"><ol class="top-model-list">${rows}</ol></div>`;
+}
+
+function initHeatmapInteractions(section: HTMLElement) {
+  const scroller = section.querySelector<HTMLElement>(".usage-heat__scroller");
+  const detail = section.querySelector<HTMLElement>(
+    "[data-heat-mobile-detail]",
+  );
+  const cells = section.querySelectorAll<HTMLElement>("[data-heat-cell]");
+  const mobile = window.matchMedia("(max-width: 760px)");
+
+  const selectCell = (cell: HTMLElement) => {
+    if (!mobile.matches || !detail) return;
+    const tooltip = cell.querySelector<HTMLElement>(".heat-tooltip");
+    if (!tooltip) return;
+
+    cells.forEach((item) => item.classList.toggle("is-active", item === cell));
+    detail.innerHTML = tooltip.innerHTML;
+    detail.hidden = false;
+  };
+
+  cells.forEach((cell) => {
+    cell.addEventListener("click", () => selectCell(cell));
+    cell.addEventListener("focus", () => selectCell(cell));
+  });
+
+  if (scroller && mobile.matches) {
+    scroller.tabIndex = 0;
+    let pointerId: number | null = null;
+    let pointerStart = 0;
+    let scrollStart = 0;
+    let didDrag = false;
+
+    scroller.addEventListener("pointerdown", (event) => {
+      if (event.pointerType !== "mouse") return;
+      pointerId = event.pointerId;
+      pointerStart = event.clientX;
+      scrollStart = scroller.scrollLeft;
+      didDrag = false;
+      scroller.classList.add("is-dragging");
+      scroller.setPointerCapture(event.pointerId);
+    });
+
+    scroller.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== pointerId) return;
+      const distance = event.clientX - pointerStart;
+      didDrag ||= Math.abs(distance) > 3;
+      scroller.scrollLeft = scrollStart - distance;
+    });
+
+    const stopDragging = (event: PointerEvent) => {
+      if (event.pointerId !== pointerId) return;
+      pointerId = null;
+      scroller.classList.remove("is-dragging");
+    };
+
+    scroller.addEventListener("pointerup", stopDragging);
+    scroller.addEventListener("pointercancel", stopDragging);
+    scroller.addEventListener(
+      "click",
+      (event) => {
+        if (!didDrag) return;
+        event.preventDefault();
+        event.stopPropagation();
+        didDrag = false;
+      },
+      true,
+    );
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        scroller.scrollLeft = scroller.scrollWidth;
+      });
+    });
+  }
 }
 
 function setState(section: Element, message: string, showBody: boolean) {
@@ -229,6 +317,7 @@ export function initTokenUsage() {
       topModelsBody.innerHTML = topModelsMarkup;
       setState(usageSection, "", true);
       setState(topModelsSection, "", true);
+      initHeatmapInteractions(usageSection);
     })
     .catch(() => {
       setState(
