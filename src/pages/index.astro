@@ -81,6 +81,8 @@ const githubHeatmap = await loadGithubHeatmap();
                 href={link.href}
                 target="_blank"
                 rel="noreferrer"
+                data-umami-event="outbound-link"
+                data-umami-event-label={link.label}
               >
                 <span class="link-card__header">
                   <SocialIcon

@@ -115,6 +115,20 @@ journalctl --user -u token-usage-export.service -n 20
 See `litellm-gateway/README.md` ("Token Usage Export") in that checkout for the
 full JSON shape, install steps, and America/Chicago timezone handling.
 
+## Analytics
+
+Page views and outbound clicks are tracked with a self-hosted, cookieless
+[Umami](https://umami.is) instance at `https://analytics.sambolgert.com`.
+
+- The script URL, website ID, and allowed domain live in `site.analytics` in
+  [src/data/site.ts](src/data/site.ts).
+- [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro) only emits the
+  tracker in production builds, and `data-domains` keeps localhost and preview
+  hosts out of the stats.
+- The three social link cards send an `outbound-link` event with a `label`
+  property (`GitHub`, `X`, `LinkedIn`) via `data-umami-event` attributes in
+  [src/pages/index.astro](src/pages/index.astro).
+
 If you are changing layout or metadata:
 
 - edit [src/layouts/BaseLayout.astro](src/layouts/BaseLayout.astro)

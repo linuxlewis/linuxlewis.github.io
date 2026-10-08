@@ -1,4 +1,9 @@
 export const site = {
+  analytics: {
+    scriptUrl: "https://analytics.sambolgert.com/script.js",
+    websiteId: "267efcb6-ca4e-428d-9866-ed54319370d2",
+    domains: "sambolgert.com",
+  },
   seo: {
     title: "Sam Bolgert | AI-Native Product Builder",
     description: "Sam Bolgert builds AI-native products for business value.",
