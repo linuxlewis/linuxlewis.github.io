@@ -46,6 +46,8 @@ Do not let the site drift into:
   - runtime snapshot fetched from `https://web.sambolgert.com/data/token-usage.json`; validated in `src/data/token-usage.ts` and rendered by `src/scripts/token-usage-client.ts`
 - `integration.litellm_export`
   - external gateway checkout at `/home/sbolgert/workspace/litellm-gateway`; its `scripts/export-token-usage.sh` + `token-usage-export.timer` produce the snapshot nightly
+- `integration.analytics`
+  - self-hosted Umami at `https://analytics.sambolgert.com`; configured in `src/data/site.ts` (`analytics`) and loaded in `src/layouts/BaseLayout.astro` for production builds only
 
 ### Relationships
 
@@ -56,6 +58,8 @@ Do not let the site drift into:
 - `page.home` -> uses -> `content.site_config`
 - `page.home` -> uses -> `content.token_usage`
 - `content.token_usage` -> sourced_from -> `integration.litellm_export`
+- `layout.base` -> loads -> `integration.analytics`
+- `integration.analytics` -> tracks_clicks_on -> `channel.github`, `channel.x`, `channel.linkedin`
 - `page.home` -> rendered_by -> `layout.base`
 - `page.home` -> styled_by -> `style.global`
 - `page.home` -> routes_to -> `channel.github`
@@ -77,6 +81,10 @@ Do not let the site drift into:
   - Astro is used for maintainable static output.
 - `decision.deploy`
   - GitHub Actions deploys to GitHub Pages.
+- `decision.analytics`
+  - One cookieless, self-hosted tracker (Umami) is the only analytics.
+  - It measures page views and outbound clicks on the social links, the site's real conversion signal.
+  - No cookie banner, no third-party trackers, no extra analytics tools.
 - `decision.style`
   - Visual language is professional, dark, technical, restrained.
   - Hacker-ish cues are allowed.
@@ -146,7 +154,7 @@ Do not introduce these without an explicit product decision:
 
 - blog engines
 - CMS integrations
-- analytics clutter
+- analytics clutter beyond the single Umami tracker
 - GitHub stats widgets
 - contact forms
 - complex client-side state
@@ -162,7 +170,6 @@ Examples:
 - `page.writing`
 - `page.projects`
 - `content.case_studies`
-- `integration.analytics`
 
 Document the change as:
 

@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { site } from "../data/site";
 
 interface Props {
   title: string;
@@ -40,6 +41,17 @@ const { title, description, markdownHref } = Astro.props;
       rel="stylesheet"
     />
     <title>{title}</title>
+    {
+      import.meta.env.PROD && (
+        <script
+          is:inline
+          defer
+          src={site.analytics.scriptUrl}
+          data-website-id={site.analytics.websiteId}
+          data-domains={site.analytics.domains}
+        />
+      )
+    }
   </head>
   <body>
     <slot />
