@@ -53,7 +53,7 @@ If you are changing content:
 
 - edit [src/data/site.ts](src/data/site.ts)
 
-## Token Usage Sections
+## Token usage sections
 
 The homepage renders two usage sections from a runtime snapshot fetched from
 `https://web.sambolgert.com/data/token-usage.json`:
@@ -79,41 +79,49 @@ visible without rebuilding or redeploying the homepage.
 
 ### Data source
 
-The snapshot is produced by the private LiteLLM gateway, which lives in a
-separate checkout at `/home/sbolgert/workspace/litellm-gateway`. Its
-`scripts/export-token-usage.sh` reads `LiteLLM_DailyUserSpend` via
-`docker exec litellm-gateway-db psql -U litellm -d litellm` and writes the
-privacy-safe JSON to `web-server/public/data/token-usage.json` (served by nginx
-at `web.sambolgert.com`).
+The private CLIProxyAPI installation at
+`/home/sbolgert/workspace/cliproxyapi-service` supplies new usage. Its
+`cliproxyapi-usage.service` runs `scripts/usage.py collect`, which subscribes to
+CLIProxyAPI's authenticated local usage stream and saves events in
+`state/usage.sqlite3`. The database also contains a separate import of the
+pre-migration LiteLLM daily aggregates. Only requests routed through the proxy
+produce new events.
 
-To inspect the gateway data or run the export manually:
+`token-usage-export.timer` runs every 15 minutes. Its service runs
+`scripts/usage.py export`, combining the historical aggregates and new events
+for a rolling 365-day window in the `America/Chicago` timezone. The script
+writes `/home/sbolgert/workspace/web-server/public/data/token-usage.json`,
+which nginx serves at the URL above. The JSON contains dates, model and
+provider names, token and request counts, and a generation timestamp. It
+contains no prompts, credentials, or client identifiers. The website reads the
+snapshot when a visitor opens the page, so new usage does not require a site
+build.
 
-```bash
-cd /home/sbolgert/workspace/litellm-gateway
+The collector depends on CLIProxyAPI's in-memory usage queue during an outage.
+Events that the proxy has not delivered to SQLite can be lost on a proxy
+restart. The [token source research](docs/cliproxy-usage-research.md) records
+the accounting rules, queue limits, and source references.
 
-# Inspect the raw daily aggregates (privacy-safe columns only):
-docker exec litellm-gateway-db psql -U litellm -d litellm \
-  -c 'SELECT date, model, prompt_tokens, completion_tokens, api_requests FROM "LiteLLM_DailyUserSpend" ORDER BY date DESC LIMIT 20;'
-
-# Regenerate the public snapshot:
-./scripts/export-token-usage.sh
-
-# Verify the export is fresh and valid:
-./scripts/check-token-usage-export.sh
-```
-
-The export runs nightly at 03:30 from the user-level systemd pair
-`token-usage-export.timer` / `.service` in that checkout. Monitor its success
-with:
+To check the collector and publish a snapshot manually on the server:
 
 ```bash
-systemctl --user status token-usage-export.service
+cd /home/sbolgert/workspace/cliproxyapi-service
+systemctl --user status cliproxyapi.service cliproxyapi-usage.service
+python3 scripts/usage.py status
+systemctl --user start token-usage-export.service
 systemctl --user list-timers token-usage-export.timer
-journalctl --user -u token-usage-export.service -n 20
+journalctl --user -u cliproxyapi-usage.service -u token-usage-export.service -n 20
 ```
 
-See `litellm-gateway/README.md` ("Token Usage Export") in that checkout for the
-full JSON shape, install steps, and America/Chicago timezone handling.
+Check the published response and its CORS header:
+
+```bash
+curl -fsSI -H 'Origin: https://sambolgert.com' \
+  https://web.sambolgert.com/data/token-usage.json
+```
+
+The CLIProxyAPI checkout's `README.md` and `MIGRATION.md` document the
+collector, token accounting, historical import, and recovery limits.
 
 ## Analytics
 

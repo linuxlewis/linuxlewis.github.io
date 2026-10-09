@@ -1,8 +1,8 @@
 /**
  * Runtime data and rendering helpers for the sambolgert.com token-usage heatmap.
  *
- * The payload is produced nightly by the private LiteLLM gateway export and
- * published by the static web-server at https://web.sambolgert.com/data/token-usage.json.
+ * The private CLIProxyAPI usage collector exports the payload every 15 minutes.
+ * The static web-server publishes it at https://web.sambolgert.com/data/token-usage.json.
  */
 
 export interface TokenUsageModel {
@@ -179,12 +179,11 @@ function isoDate(ms: number): string {
   return new Date(ms).toISOString().slice(0, 10);
 }
 
-// LiteLLM buckets usage by the gateway host's wall clock. The host runs in
-// America/Chicago, so "today" for the heatmap must follow the same zone — not
-// UTC, where a late-evening request already belongs to the next calendar day.
+// The CLIProxyAPI exporter buckets usage in America/Chicago, so "today" for the
+// heatmap follows that zone. UTC can place a late-evening request on the next day.
 const LOCAL_TIME_ZONE = "America/Chicago";
 
-/** "today" in the gateway's local timezone (handles DST automatically). */
+/** "today" in the exporter's timezone (handles DST automatically). */
 function localToday(): string {
   // The en-CA locale formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat("en-CA", {
@@ -236,7 +235,7 @@ export function buildHeatCells(data: TokenUsageData): HeatCell[] {
 
   // End on today so the current week shows squares for elapsed days and blanks
   // for days still to come. Clamp to the latest data day in case the build
-  // runs before the nightly export has produced today's row.
+  // runs before the next export has produced today's row.
   const lastDataDate = data.days[data.days.length - 1].date;
   const today = localToday();
   const endDate = today > lastDataDate ? today : lastDataDate;

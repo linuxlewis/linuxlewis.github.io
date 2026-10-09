@@ -44,8 +44,8 @@ Do not let the site drift into:
   - `https://www.linkedin.com/in/sbolgert`
 - `content.token_usage`
   - runtime snapshot fetched from `https://web.sambolgert.com/data/token-usage.json`; validated in `src/data/token-usage.ts` and rendered by `src/scripts/token-usage-client.ts`
-- `integration.litellm_export`
-  - external gateway checkout at `/home/sbolgert/workspace/litellm-gateway`; its `scripts/export-token-usage.sh` + `token-usage-export.timer` produce the snapshot nightly
+- `integration.cliproxy_usage`
+  - external CLIProxyAPI checkout at `/home/sbolgert/workspace/cliproxyapi-service`; `scripts/usage.py collect` persists proxy events in SQLite, and `token-usage-export.timer` publishes the snapshot every 15 minutes
 - `integration.analytics`
   - self-hosted Umami at `https://analytics.sambolgert.com`; configured in `src/data/site.ts` (`analytics`) and loaded in `src/layouts/BaseLayout.astro` for production builds only
 
@@ -57,7 +57,7 @@ Do not let the site drift into:
 - `site` -> resolves_to -> `domain.primary`
 - `page.home` -> uses -> `content.site_config`
 - `page.home` -> uses -> `content.token_usage`
-- `content.token_usage` -> sourced_from -> `integration.litellm_export`
+- `content.token_usage` -> sourced_from -> `integration.cliproxy_usage`
 - `layout.base` -> loads -> `integration.analytics`
 - `integration.analytics` -> tracks_clicks_on -> `channel.github`, `channel.x`, `channel.linkedin`
 - `page.home` -> rendered_by -> `layout.base`

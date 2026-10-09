@@ -59,7 +59,7 @@ export const site = {
     sub: "Trailing 365 days",
     summary: "tokens across {models} models",
     unavailable:
-      "Live token usage isn't available right now. Check back after the nightly export has run.",
+      "Live token usage isn't available right now. Check back after the next export.",
     dataUrl: import.meta.env.DEV
       ? "/data/token-usage.json"
       : "https://web.sambolgert.com/data/token-usage.json",
@@ -69,7 +69,7 @@ export const site = {
   topModels: {
     label: "Top models",
     unavailable:
-      "Model rankings aren't available right now. Check back after the nightly export has run.",
+      "Model rankings aren't available right now. Check back after the next export.",
     count: 8,
   },
 } as const;
